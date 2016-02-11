@@ -9,6 +9,8 @@ SET(SNAPPY_PATCHLEVEL 3)
 # versions of snappy... let's just start with 1.1.3
 SET(SNAPPY_SONAME "1.1.3")
 
+option(SNAPPY_STATIC_DEFINE "Compile static snappy library (off will turn in to dynamic library)" ON)
+
 INCLUDE(CheckIncludeFiles)
 INCLUDE(CheckLibraryExists)
 INCLUDE(CheckCXXSourceCompiles)
@@ -80,7 +82,13 @@ ADD_DEFINITIONS(-DHAVE_CONFIG_H)
 INCLUDE_DIRECTORIES(BEFORE ${Snappy_SOURCE_DIR})
 INCLUDE_DIRECTORIES(AFTER ${Snappy_BINARY_DIR})
 
-ADD_LIBRARY(snappy SHARED
+IF(SNAPPY_STATIC_DEFINE)
+    SET(SNAPPY_LIBRARY_TYPE STATIC)
+ELSE()
+    SET(SNAPPY_LIBRARY_TYPE SHARED)
+ENDIF(SNAPPY_STATIC_DEFINE)
+
+ADD_LIBRARY(snappy ${SNAPPY_LIBRARY_TYPE}
         snappy-c.cc
         snappy-c.h
         snappy-sinksource.cc
